@@ -20,6 +20,12 @@ import { configValidationSchema, config } from './config';
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
         autoLoadEntities: true,
+        ssl: configService.get('database.ssl'),
+        extra: {
+          ssl: configService.get('database.ssl')
+            ? { rejectUnauthorized: false }
+            : false,
+        },
         synchronize: configService.get('database.sync'),
         host: configService.get('database.host'),
         port: configService.get('database.port'),

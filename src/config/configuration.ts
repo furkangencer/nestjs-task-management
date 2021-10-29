@@ -1,7 +1,7 @@
 import { Environment } from './environment.enum';
 
 export const config = () => ({
-  env: process.env.NODE_ENV || Environment.DEVELOPMENT,
+  env: process.env.NODE_ENV,
   port: parseInt(process.env.PORT, 10) || 3000,
   database: {
     host: process.env.DB_HOST,
@@ -10,6 +10,7 @@ export const config = () => ({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     sync: process.env.NODE_ENV === Environment.DEVELOPMENT,
+    ssl: process.env.NODE_ENV === Environment.PRODUCTION,
   },
   jwt: {
     secret: process.env.JWT_SECRET,
