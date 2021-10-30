@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
-import { TasksModule } from './tasks/tasks.module';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { configValidationSchema, config } from './config';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
+import { configValidationSchema, config, validationPipeConfig } from './config';
+import { HttpExceptionFilter } from './common/filters';
 
 @Module({
   imports: [
@@ -35,6 +37,16 @@ import { configValidationSchema, config } from './config';
       }),
     }),
     AuthModule,
+  ],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useFactory: () => new ValidationPipe(validationPipeConfig),
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

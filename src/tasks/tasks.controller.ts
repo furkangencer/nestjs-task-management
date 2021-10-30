@@ -7,16 +7,20 @@ import {
   Param,
   Delete,
   Query,
-  ParseUUIDPipe,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto, FilterTasksDto, UpdateTaskStatusDto } from './dto';
+import {
+  CreateTaskDto,
+  FilterTasksDto,
+  UpdateTaskStatusDto,
+  TaskIdDto,
+} from './dto';
 import { Task } from './task.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
-import { Logger } from '@nestjs/common';
 
 @Controller('tasks')
 @UseGuards(AuthGuard('jwt'))
@@ -39,7 +43,7 @@ export class TasksController {
 
   @Get(':id')
   getTaskById(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param() { id }: TaskIdDto,
     @GetUser() user: User,
   ): Promise<Task> {
     return this.tasksService.getTaskById(id, user);
@@ -60,7 +64,7 @@ export class TasksController {
 
   @Patch(':id/status')
   updateTaskStatus(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param() { id }: TaskIdDto,
     @GetUser() user: User,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
   ): Promise<Task> {
@@ -69,10 +73,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  deleteTask(
-    @Param('id', ParseUUIDPipe) id: string,
-    @GetUser() user: User,
-  ): Promise<void> {
+  deleteTask(@Param() { id }: TaskIdDto, @GetUser() user: User): Promise<void> {
     return this.tasksService.deleteTask(id, user);
   }
 }

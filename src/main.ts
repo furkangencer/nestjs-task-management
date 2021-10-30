@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './transform.interceptor';
@@ -9,11 +8,6 @@ async function bootstrap() {
   const logger = new Logger('NestApplication');
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      disableErrorMessages: false,
-    }),
-  );
   app.useGlobalInterceptors(new TransformInterceptor());
   const configService = app.get(ConfigService);
   const port = configService.get('port');

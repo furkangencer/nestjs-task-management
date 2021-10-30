@@ -1,11 +1,10 @@
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { InternalServerErrorException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto';
 import { User } from './user.entity';
-import * as bcrypt from 'bcrypt';
+import { UsernameAlreadyExistsError } from 'src/common/exceptions';
+import { POSTGRES } from 'src/constants';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
@@ -18,9 +17,8 @@ export class UsersRepository extends Repository<User> {
     const user = await this.create({ username, password: hashedPassword });
 
     await this.save(user).catch((error) => {
-      if (error.code === '23505') {
-        // duplicate username
-        throw new ConflictException('Username already exists');
+      if (error.code === POSTGRES.ERROR_CODES.DUPLICATE_RECORD) {
+        throw new UsernameAlreadyExistsError({ username });
       } else {
         throw new InternalServerErrorException();
       }
