@@ -1,4 +1,9 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  ValidationPipe,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -6,6 +11,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema, config, validationPipeConfig } from './config';
 import { HttpExceptionFilter } from './common/filters';
+import { HttpRequestLoggerMiddleware } from './common/middlewares';
+import { TasksController } from './tasks/tasks.controller';
 
 @Module({
   imports: [
@@ -49,4 +56,8 @@ import { HttpExceptionFilter } from './common/filters';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpRequestLoggerMiddleware).forRoutes(TasksController);
+  }
+}
