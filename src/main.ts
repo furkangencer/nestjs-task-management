@@ -1,17 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TransformInterceptor } from './transform.interceptor';
-import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { WinstonModule } from 'nest-winston';
+import { LoggerConfig } from './config';
 
 async function bootstrap() {
-  const logger = new Logger('NestApplication');
-  const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.useGlobalInterceptors(new TransformInterceptor());
+  const loggerConfig = LoggerConfig('verbose'); // TODO: get from env
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(loggerConfig),
+  });
   const configService = app.get(ConfigService);
   const port = configService.get('port');
+
+  app.enableCors();
+
   await app.listen(port);
-  logger.log(`Application listening on port ${port}`);
 }
 bootstrap();

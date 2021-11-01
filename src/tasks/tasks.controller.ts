@@ -8,7 +8,6 @@ import {
   Delete,
   Query,
   UseGuards,
-  Logger,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import {
@@ -25,7 +24,6 @@ import { GetUser } from 'src/auth/get-user.decorator';
 @Controller('tasks')
 @UseGuards(AuthGuard('jwt'))
 export class TasksController {
-  private logger = new Logger('TasksController');
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
@@ -33,11 +31,6 @@ export class TasksController {
     @Query() filterTasksDto: FilterTasksDto,
     @GetUser() user: User,
   ): Promise<Task[]> {
-    this.logger.verbose(
-      `User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(
-        filterTasksDto,
-      )}`,
-    );
     return this.tasksService.filterTasks(filterTasksDto, user);
   }
 
@@ -54,11 +47,6 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
   ): Promise<Task> {
-    this.logger.verbose(
-      `User "${user.username}" creating a new task. Data: ${JSON.stringify(
-        createTaskDto,
-      )}`,
-    );
     return this.tasksService.createTask(createTaskDto, user);
   }
 

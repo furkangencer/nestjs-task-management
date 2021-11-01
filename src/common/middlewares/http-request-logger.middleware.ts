@@ -10,10 +10,15 @@ export class HttpRequestLoggerMiddleware implements NestMiddleware {
     const { protocol, originalUrl, method, headers, params, body, query } = req;
     const logger = new Logger();
     if (this.configService.get('env') !== 'test') {
-      logger.verbose(
-        `[Request] ${protocol}://${req.get('host')}${originalUrl} [${method}]
-        ${JSON.stringify({ headers, params, body, query }, null, '\t')}`,
-      );
+      const url = `${protocol}://${req.get('host')}${originalUrl}`;
+      logger.verbose(`[Request]`, {
+        method,
+        url,
+        headers,
+        params,
+        body,
+        query,
+      });
     }
     next();
   }

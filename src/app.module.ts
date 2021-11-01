@@ -6,13 +6,17 @@ import {
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema, config, validationPipeConfig } from './config';
 import { HttpExceptionFilter } from './common/filters';
 import { HttpRequestLoggerMiddleware } from './common/middlewares';
 import { TasksController } from './tasks/tasks.controller';
+import {
+  HttpResponseLoggerInterceptor,
+  TransformInterceptor,
+} from './common/interceptors';
 
 @Module({
   imports: [
@@ -46,6 +50,14 @@ import { TasksController } from './tasks/tasks.controller';
     AuthModule,
   ],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpResponseLoggerInterceptor,
+    },
     {
       provide: APP_PIPE,
       useFactory: () => new ValidationPipe(validationPipeConfig),
