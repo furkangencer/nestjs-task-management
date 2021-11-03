@@ -24,18 +24,6 @@ export const config = () => ({
       env: process.env.NODE_ENV,
     },
     transports: [
-      // new transports.Console({
-      //   format: format.combine(
-      //     format.timestamp(),
-      //     format.ms(),
-      //     format.timestamp({
-      //       format: 'YYYY-MM-DD HH:mm:ss',
-      //     }),
-      //     nestWinstonModuleUtilities.format.nestLike('Nest', {
-      //       prettyPrint: true,
-      //     }),
-      //   ),
-      // }),
       new transports.Console({
         format: format.combine(
           format.ms(),
@@ -43,7 +31,7 @@ export const config = () => ({
             format: 'YYYY-MM-DD HH:mm:ss',
           }),
           format.json({
-            space: 2,
+            space: process.env.NODE_ENV === Environment.PRODUCTION ? 0 : 2,
           }),
         ),
       }),
