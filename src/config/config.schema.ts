@@ -13,4 +13,7 @@ export const configValidationSchema = Joi.object().keys({
   DB_DATABASE: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRES_IN: Joi.number().required(),
+  LOG_LEVEL: Joi.string()
+    .valid('error', 'warn', 'info', 'verbose', 'debug', 'silly')
+    .default('verbose'),
 });

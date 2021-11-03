@@ -17,6 +17,7 @@ import {
   HttpResponseLoggerInterceptor,
   TransformInterceptor,
 } from './common/interceptors';
+import { WinstonModule } from 'nest-winston';
 
 @Module({
   imports: [
@@ -48,6 +49,12 @@ import {
       }),
     }),
     AuthModule,
+    WinstonModule.forRootAsync({
+      useFactory: async (configService: ConfigService) =>
+        configService.get('logger'),
+      inject: [ConfigService],
+      imports: [ConfigModule],
+    }),
   ],
   providers: [
     {
