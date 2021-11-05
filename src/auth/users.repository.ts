@@ -3,8 +3,8 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dto';
 import { User } from './user.entity';
-import { UsernameAlreadyExistsError } from 'src/common/exceptions';
-import { POSTGRES } from 'src/constants';
+import { UsernameAlreadyExistsError } from '../common/exceptions';
+import { POSTGRES } from '../constants';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {

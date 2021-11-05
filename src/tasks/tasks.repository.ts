@@ -1,5 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { User } from 'src/auth/user.entity';
+import { User } from '../auth/user.entity';
 import { CreateTaskDto, FilterTasksDto } from './dto';
 import { TaskStatus } from './task-status.enum';
 import { Task } from './task.entity';
