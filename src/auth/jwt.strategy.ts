@@ -27,6 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedAccessError();
     }
-    return user;
+    return user; // Passport will build a user object based on the return value of our validate() method, and attach it as a property on the Request object.
   }
 }

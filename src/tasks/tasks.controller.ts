@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import {
@@ -17,12 +16,10 @@ import {
   TaskIdDto,
 } from './dto';
 import { Task } from './task.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/user.entity';
-import { GetUser } from '../auth/get-user.decorator';
+import { GetUser } from '../auth/decorators';
 
 @Controller('tasks')
-@UseGuards(AuthGuard('jwt'))
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 

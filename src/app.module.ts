@@ -6,13 +6,14 @@ import {
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TasksModule } from './tasks/tasks.module';
+import { TasksController } from './tasks/tasks.controller';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { configValidationSchema, config, validationPipeConfig } from './config';
 import { HttpExceptionFilter } from './common/filters';
 import { HttpRequestLoggerMiddleware } from './common/middlewares';
-import { TasksController } from './tasks/tasks.controller';
 import {
   HttpResponseLoggerInterceptor,
   TransformInterceptor,
@@ -61,6 +62,10 @@ import { LoggerModule } from 'nestjs-pino';
     }),
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
