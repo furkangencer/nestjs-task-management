@@ -3,48 +3,48 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  Logger,
-  Inject,
 } from '@nestjs/common';
 import { tap } from 'rxjs/operators';
 import { ConfigService } from '@nestjs/config';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { PinoLogger } from 'nestjs-pino';
+import { Environment } from '../enums';
 
 @Injectable()
 export class HttpResponseLoggerInterceptor implements NestInterceptor {
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    private readonly logger: PinoLogger,
     private configService: ConfigService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const req = context.switchToHttp().getRequest();
     const { statusCode } = context.switchToHttp().getResponse();
-    const { protocol, originalUrl, method } = req;
+    const { originalUrl, method } = req;
 
-    const url = `${protocol}://${req.get('host')}${originalUrl}`;
-    const canShowLog = this.configService.get('env') !== 'test';
+    const canShowLog = this.configService.get('env') !== Environment.TEST;
 
     return next.handle().pipe(
       tap({
         next: (val) => {
           if (canShowLog) {
-            this.logger.verbose(val, {
+            this.logger.info({
+              body: val,
               statusCode,
               method,
-              url,
-              type: '[Response]',
+              url: originalUrl,
+              type: '[RESPONSE]',
             });
           }
         },
         error: (error) => {
           if (canShowLog) {
             const { response, status } = error;
-            this.logger.error(response, {
+            this.logger.error({
+              body: response,
               statusCode: status,
               method,
-              url,
-              type: '[Response]',
+              url: originalUrl,
+              type: '[ERROR]',
             });
           }
         },

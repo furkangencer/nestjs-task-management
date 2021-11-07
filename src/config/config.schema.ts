@@ -1,9 +1,9 @@
 import * as Joi from 'joi';
-import { Environment } from './environment.enum';
+import { Environment, LogLevel } from '../common/enums';
 
 export const configValidationSchema = Joi.object().keys({
   NODE_ENV: Joi.string()
-    .valid(Environment.DEVELOPMENT, Environment.PRODUCTION, Environment.TEST)
+    .valid(...Object.values(Environment))
     .default(Environment.DEVELOPMENT),
   PORT: Joi.number().default(3000),
   DB_HOST: Joi.string().required(),
@@ -14,6 +14,6 @@ export const configValidationSchema = Joi.object().keys({
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRES_IN: Joi.number().required(),
   LOG_LEVEL: Joi.string()
-    .valid('error', 'warn', 'info', 'verbose', 'debug', 'silly')
-    .default('verbose'),
+    .valid(...Object.values(LogLevel))
+    .default(LogLevel.INFO),
 });

@@ -1,5 +1,4 @@
-import { Environment } from './environment.enum';
-import { format, transports } from 'winston';
+import { Environment } from '../common/enums';
 
 export const config = () => ({
   env: process.env.NODE_ENV,
@@ -19,22 +18,16 @@ export const config = () => ({
   },
   logger: {
     level: process.env.LOG_LEVEL,
-    defaultMeta: {
-      service: 'task-management-service', // TODO: import from package.json
-      env: process.env.NODE_ENV,
+    prettyPrint: process.env.NODE_ENV !== Environment.PRODUCTION,
+    formatters: {
+      level(label) {
+        return { level: label };
+      },
     },
-    transports: [
-      new transports.Console({
-        format: format.combine(
-          format.ms(),
-          format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
-          }),
-          format.json({
-            space: process.env.NODE_ENV === Environment.PRODUCTION ? 0 : 2,
-          }),
-        ),
-      }),
-    ],
+    autoLogging: false,
+    quietReqLogger: true,
+    base: {
+      pid: undefined,
+    },
   },
 });

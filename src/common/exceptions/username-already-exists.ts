@@ -1,8 +1,7 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { ERROR_MESSAGES } from '../../constants';
-import { CustomHttpException } from './custom-http-exception';
 
-export class UsernameAlreadyExistsError extends CustomHttpException {
+export class UsernameAlreadyExistsError extends HttpException {
   constructor(data: Record<string, any>) {
     super(
       {

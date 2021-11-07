@@ -17,7 +17,7 @@ import {
   HttpResponseLoggerInterceptor,
   TransformInterceptor,
 } from './common/interceptors';
-import { WinstonModule } from 'nest-winston';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -49,11 +49,15 @@ import { WinstonModule } from 'nest-winston';
       }),
     }),
     AuthModule,
-    WinstonModule.forRootAsync({
-      useFactory: async (configService: ConfigService) =>
-        configService.get('logger'),
-      inject: [ConfigService],
+    LoggerModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const loggerConfig = await configService.get('logger');
+        return {
+          pinoHttp: loggerConfig,
+        };
+      },
     }),
   ],
   providers: [
